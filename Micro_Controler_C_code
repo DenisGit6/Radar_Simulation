@@ -1,0 +1,42 @@
+#define TRIG_PIN 9
+#define ECHO_PIN 10
+
+void setup() {
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+  Serial.begin(9600);  // Open serial communication
+}
+
+void loop() {
+  // Send a 10-microsecond pulse to the trigger pin
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+
+  // Measure the duration of the echo pulse
+  long duration = pulseIn(ECHO_PIN, HIGH);
+
+  // Calculate distance in centimeters
+  float distance = duration * 0.034 / 2;
+
+  // Validate the distance to avoid invalid readings
+  if (distance > 400 || distance < 2) {
+    distance = 0;  // Out of range
+  }
+
+  // Send angle and distance over serial
+  static int angle = 0;
+  Serial.print(angle);
+  Serial.print(",");
+  Serial.println(distance);
+
+  // Increment angle for simulation
+  angle += 10;
+  if (angle >= 360) {
+    angle = 0;
+  }
+
+  delay(300);  // Add more delay if needed
+}
